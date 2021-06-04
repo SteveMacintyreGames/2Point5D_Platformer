@@ -4,6 +4,18 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    private static Player _instance;
+    public static Player Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError("Player is null");
+            }
+            return _instance;
+        }
+    }
 
     private CharacterController _controller;
     [SerializeField] private float _speed = 5f;
@@ -12,10 +24,18 @@ public class Player : MonoBehaviour
     private float _yVelocity; 
     private bool _canDoubleJump;
 
-  
+    [SerializeField] private int _coins;
+
+
+    void Awake()
+    {
+        _instance = this;
+    }
+
     void Start()
     {
         _controller = GetComponent<CharacterController>();
+        _coins = 0;
     }
 
     void Update()
@@ -47,5 +67,12 @@ public class Player : MonoBehaviour
         velocity.y = _yVelocity;
         _controller.Move(velocity * Time.deltaTime);
 
+        UIManager.Instance.UpdateCoinText(_coins);
+
+    }
+
+    public void AddCoins()
+    {
+        _coins++;
     }
 }
