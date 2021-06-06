@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class UIManager : MonoBehaviour
 {
     private static UIManager _instance;
@@ -20,6 +19,7 @@ public class UIManager : MonoBehaviour
     }
 
     public Text coinText;
+    public Text LivesText;
 
     void Awake()
     {
@@ -34,6 +34,11 @@ public class UIManager : MonoBehaviour
     public void UpdateCoinText(int coins)
     {
         coinText.text = "Coins: " + coins;
+    }
+
+    public void UpdateLivesText(int lives)
+    {
+        LivesText.text = "Lives: "+lives;
     }
  
 }

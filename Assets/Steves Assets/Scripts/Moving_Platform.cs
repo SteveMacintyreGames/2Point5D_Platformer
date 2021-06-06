@@ -12,13 +12,10 @@ public class Moving_Platform : MonoBehaviour
     {
         _currentTarget = _targetB.position;
     }
-
-
-    void Update()
+    void FixedUpdate()
     {
         MoveTowardsCurrentTarget();
-        CheckIfTargetReached();
-        
+        CheckIfTargetReached();        
     }
 
     void MoveTowardsCurrentTarget()
@@ -35,6 +32,22 @@ public class Moving_Platform : MonoBehaviour
         if (transform.position == _targetA.position)
         {
             _currentTarget = _targetB.position;
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Player")
+        {
+            other.transform.parent = this.transform;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if(other.tag == "Player")
+        {
+            other.transform.parent = null;
         }
     }
    
