@@ -14,11 +14,15 @@ public class Player : MonoBehaviour
     private float _jumpHeight = 15.0f;
     private float _yVelocity;
     private bool _canDoubleJump = false;
+    private bool _canWallJump;
     [SerializeField]
     private int _coins;
     private UIManager _uiManager;
     [SerializeField]
     private int _lives = 3;
+
+    private Vector3 _direction, _velocity, _normal; 
+
 
     // Start is called before the first frame update
     void Start()
@@ -38,11 +42,14 @@ public class Player : MonoBehaviour
     void Update()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
-        Vector3 direction = new Vector3(horizontalInput, 0, 0);
-        Vector3 velocity = direction * _speed;
+
 
         if (_controller.isGrounded == true)
         {
+            _canWallJump = false;
+           _direction = new Vector3(horizontalInput, 0, 0);
+           _velocity = _direction * _speed;
+            
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 _yVelocity = _jumpHeight;
@@ -53,19 +60,25 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (_canDoubleJump == true)
+                if (_canDoubleJump)
                 {
                     _yVelocity += _jumpHeight;
                     _canDoubleJump = false;
+                }
+                if (_canWallJump)
+                {
+                    _yVelocity = _jumpHeight*1.2f;
+                    _velocity = _normal * _speed;
                 }
             }
 
             _yVelocity -= _gravity;
         }
 
-        velocity.y = _yVelocity;
 
-        _controller.Move(velocity * Time.deltaTime);
+        _velocity.y = _yVelocity;
+
+        _controller.Move(_velocity * Time.deltaTime);
     }
 
     public void AddCoins()
@@ -87,8 +100,22 @@ public class Player : MonoBehaviour
         }
     }
 
+   private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (_controller.isGrounded == false && hit.transform.tag == "Wall")
+        {
+            Debug.DrawRay(hit.point, hit.normal, Color.blue);
+            _canWallJump = true;
+            _normal = hit.normal;
+        }
+        
+        //Debug.Log("Collider hit");
+
+    }
     public int CoinCount()
     {
         return _coins;
     }
+
+ 
 }
