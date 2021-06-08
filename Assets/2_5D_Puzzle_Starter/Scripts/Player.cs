@@ -21,8 +21,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _lives = 3;
 
-    private Vector3 _direction, _velocity, _normal; 
-
+    private Vector3 _direction, _velocity, _wallNormal; 
+    [SerializeField] private float pushPower = 2f;
 
     // Start is called before the first frame update
     void Start()
@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
                 if (_canWallJump)
                 {
                     _yVelocity = _jumpHeight*1.2f;
-                    _velocity = _normal * _speed;
+                    _velocity = _wallNormal * _speed;
                 }
             }
 
@@ -102,14 +102,27 @@ public class Player : MonoBehaviour
 
    private void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        //check for tagged object MovingBox.
+        if(hit.gameObject.tag == "MovingBox")
+        {
+            
+            //confirm a rigidbody exists.
+            Rigidbody body = hit.collider.attachedRigidbody;
+            if (body != null)
+            {
+                Vector3 pushDir = new Vector3(hit.moveDirection.x, 0,0);
+                //apply the push
+                body.velocity = pushDir * pushPower;
+            }
+            
+        }
+
         if (_controller.isGrounded == false && hit.transform.tag == "Wall")
         {
-            Debug.DrawRay(hit.point, hit.normal, Color.blue);
+            //Debug.DrawRay(hit.point, hit.normal, Color.blue);
             _canWallJump = true;
-            _normal = hit.normal;
+            _wallNormal = hit.normal;
         }
-        
-        //Debug.Log("Collider hit");
 
     }
     public int CoinCount()
