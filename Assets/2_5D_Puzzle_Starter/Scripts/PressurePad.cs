@@ -8,15 +8,14 @@ public class PressurePad : MonoBehaviour
     
    void OnTriggerStay(Collider other)
    {
-       if (other.gameObject.tag == "MovingBox")
-       {
-           var range = .2;
-           //Debug.Log("MovingBox Detected");
-           if (Vector3.Distance(transform.position, other.transform.position)<range)
-           {
-               Debug.Log("box is in range");
-               _display.material.color = Color.blue;
-           }
-       }
+        var range = .2;
+        //Debug.Log("MovingBox Detected");
+        if (Vector3.Distance(transform.position, other.transform.position)<range)
+        {
+            //Debug.Log("box is in range");
+            _display.material.color = Color.blue;
+
+            other.GetComponent<Rigidbody>().isKinematic = true;
+        }
    }
 }
